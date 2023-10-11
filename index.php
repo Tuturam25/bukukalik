@@ -28,6 +28,10 @@ if(isset($_GET['home'])) {
     header('location: index.php');
 }
 
+if(isset($_POST['batal'])) {
+    header('refresh: 0');
+}
+
 if(isset($_POST['konfirmasi'])) {
     $kategori = $_POST['kategori'];
     $namabuku = $_POST['namabuku'];
@@ -41,6 +45,8 @@ if(isset($_POST['konfirmasi'])) {
 
 ?>
 
+<link rel="stylesheet" href="output.css">
+
 <div class="">
     <form action="" method="get">
         <input type="submit" name="home" value="home">
@@ -49,7 +55,84 @@ if(isset($_POST['konfirmasi'])) {
     </form>
 </div>
 
+
+<?php if(!$_GET) : ?>
+
+
+pemula
+
+
+<?php endif ?>
+
 <?php if(isset($_GET['admin'])) { ?>
+
+    <table border="1">
+        <tr>
+            <th>kategori</th>
+            <th>nama buku</th>
+            <th>harga</th>
+            <th>stok</th>
+            <th>nama penerbit</th>
+            <th>aksi</th>
+        </tr>
+        <?php foreach(mysqli_query($conn, 'select * from penerbit') as $penerbit) { ?>
+        <tr>
+            <td>
+                <form action="" method="post">
+                <?php if(isset($_POST['ubah']) and $_POST['id'] == $penerbit['id_penerbit']) { ?>
+                        <input type="hidden" name="id_penerbit" value="<?= $penerbit['id_penerbit'] ?>">
+                        <input type="text" name="nama" value="<?= $penerbit['nama'] ?>">
+                <?php } else { 
+                    echo $penerbit['nama'];
+                }?>
+            </td>
+            <td>
+                <?php if(isset($_POST['ubah']) and $_POST['id'] == $penerbit['id_penerbit']) { ?>
+                    <input type="text" name="alamat" value="<?= $penerbit['alamat'] ?>">
+                <?php } else { 
+                    echo $penerbit['alamat'];
+                }?>    
+            </td>
+            <td>
+                <?php if(isset($_POST['ubah']) and $_POST['id'] == $penerbit['id_penerbit']) { ?>
+                    <input type="number" name="kota" value="<?= $penerbit['kota'] ?>">
+                <?php } else { 
+                    echo $penerbit['kota'];
+                }?>
+            </td>
+            <td>
+                <?php if(isset($_POST['ubah']) and $_POST['id'] == $penerbit['id_penerbit']) { ?>
+                    <input type="text" name="telepon" value="<?= $penerbit['telepon'] ?>">
+                <?php } else { 
+                    echo $penerbit['telepon'];
+                }?>
+            </td>
+            <td>
+                <?php if(isset($_POST['ubah']) and $_POST['id'] == $penerbit['id_penerbit']) { ?>
+                    <select name="penerbit" id="">
+                    <option value="">pilih penerbit</option>
+                    <?php foreach(mysqli_query($conn, "select * from penerbit") as $terbit) { ?>
+                        <option <?php if($terbit['nama'] == $penerbit['nama']) echo 'selected' ?> value="<?= $terbit['id_penerbit'] ?>"><?= $terbit['nama'] ?></option>
+                    <?php } ?>
+                    </select>
+                    <?php } else { 
+                        echo $penerbit['nama'];
+                    }?>
+            </td>
+            <td>    
+                    <?php if(!isset($_POST['ubah'])) : ?>
+                    <button name="ubah">ubah</button>
+                    <input type="hidden" name="id" value="<?= $penerbit['id_penerbit'] ?>">
+                    <?php elseif(isset($_POST['ubah']) and $_POST['id'] == $penerbit['id_penerbit']) : ?>
+                        <button name="konfirmasi">konfirmasi</button>
+                        <button name="batal">batal</button>
+                    <?php endif ?>
+                </form>
+            </td>
+            </tr>
+        <?php } ?>
+    </table>
+
     <form action="" method="post">
     <label for="">nama penerbit</label>
     <input type="text" name="penerbit">
@@ -117,7 +200,7 @@ if(isset($_POST['konfirmasi'])) {
                         echo $buku['nama'];
                     }?>
             </td>
-            <td>
+            <td>    
                     <?php if(!isset($_POST['ubah'])) : ?>
                     <button name="ubah">ubah</button>
                     <input type="hidden" name="id" value="<?= $buku['id_buku'] ?>">
